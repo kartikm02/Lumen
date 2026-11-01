@@ -1,0 +1,11 @@
+.gradle/
+**/build/
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+*.p12
+*.jks
+*.tfstate*
