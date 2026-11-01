@@ -1,16 +1,16 @@
 # Lumen
 
-Lumen is intended to become a multi-tenant RAG and agent platform. This repository currently contains an **early foundation only**: a Java 25 / Spring Boot 4 API with JWT resource-server configuration, a tenant-claim endpoint, health and Prometheus endpoints, virtual-thread configuration, and unit tests. It is not yet a working RAG system or a deployable multi-tenant service.
+Lumen is intended to become a multi-tenant RAG and agent platform. This repository currently contains an **early foundation only**: a Java 25 / Spring Boot 4 API with JWT resource-server configuration, a tenant-claim endpoint, health and Prometheus endpoints, virtual-thread configuration, unit tests, and standalone reciprocal-rank fusion and retrieval metric primitives. These primitives are not wired to a database or evaluation dataset. It is not yet a working RAG system or a deployable multi-tenant service.
 
 ## Run the foundation
 
-Prerequisites: Java 25, Gradle 9.2.1, and an OpenID Connect issuer you control. Set `LUMEN_JWT_ISSUER_URI` to its issuer URI, then run `gradle :lumen-api:bootRun`. Spring Security validates JWTs using the issuer's keys. `GET /v1/tenant` requires a valid bearer token containing `tenant_id`. Health is public; other endpoints require authentication. Restrict management access at the network layer before deploying.
+Prerequisites: Java 25, Gradle 9.2.1, and an OpenID Connect issuer you control. Set `LUMEN_JWT_ISSUER_URI` to its issuer URI and `LUMEN_JWT_AUDIENCE` to the expected audience, then run `gradle :lumen-api:bootRun`. Spring Security validates JWTs using the issuer's keys. `GET /v1/tenant` requires a valid bearer token containing `tenant_id`. Health is public; other endpoints require authentication. Restrict management access at the network layer before deploying.
 
 Run unit tests with `gradle test`. The tests do not establish cross-tenant isolation; they only exercise tenant-claim handling.
 
 ## Security status
 
-No credentials or tokens belong in this repository. Supply issuer settings and any future credentials from the environment or a secret manager. The current JWT setup validates issuer and signature but does not yet enforce an audience or tenant authorization policy. Do not expose this prototype to untrusted traffic. Tenant-aware data access and database row-level security are not yet implemented or tested.
+No credentials or tokens belong in this repository. Supply issuer settings and any future credentials from the environment or a secret manager. The JWT setup validates issuer, signature and audience, but does not yet enforce a tenant authorization policy. Do not expose this prototype to untrusted traffic. Tenant-aware data access and database row-level security are not yet implemented or tested.
 
 ## Measurements and AWS
 
