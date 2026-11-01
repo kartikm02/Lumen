@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: lumen
+      POSTGRES_USER: lumen_owner
+      POSTGRES_PASSWORD: ${LUMEN_DB_OWNER_PASSWORD:?Run make init-secrets first}
+      LUMEN_DB_APP_PASSWORD: ${LUMEN_DB_APP_PASSWORD:?Run make init-secrets first}
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - lumen-postgres:/var/lib/postgresql/data
+      - ./lumen-api/src/main/resources/db/migration/V1__tenant_foundation.sql:/docker-entrypoint-initdb.d/01-foundation.sql:ro
+      - ./deploy/local/02-runtime-role.sh:/docker-entrypoint-initdb.d/02-runtime-role.sh:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U lumen_owner -d lumen']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+volumes:
+  lumen-postgres:

@@ -19,3 +19,9 @@ No workload, retrieval, cost, reliability, or AWS results have been measured. No
 ## Remaining work
 
 Ingestion and outbox, Kafka worker/retries/DLQ, S3-compatible storage, pgvector and row-level security, hybrid retrieval, model integration and streaming, MCP agent, quotas, evaluations, tracing, load tests, Compose, and cloud infrastructure remain to be implemented. The original build plan is the intended roadmap, not evidence that these features exist.
+
+## Local database foundation
+
+Run `make init-secrets` once to create an ignored `.env` with randomly generated database passwords, then `make up` to start the PostgreSQL/pgvector service. The database port binds to localhost. The initial schema and a restricted `lumen_app` role are created only on a fresh volume. `make down` stops the service and preserves its data; changing `.env` later does not rotate passwords in an existing volume. Protect `.env` and any local backups as credentials.
+
+The schema enables and forces RLS on tenant data and denies access without a transaction-local tenant ID. `TenantTransaction` sets that ID for a transaction and refuses superuser or BYPASSRLS roles. The API does not yet connect to this database, and cross-tenant behavior has not yet been verified locally because Docker is unavailable. The integration test requires Docker and is skipped if it is absent; CI checks that Docker is running before executing tests. The SQL file is an initial schema, not yet managed by a Flyway runtime.
